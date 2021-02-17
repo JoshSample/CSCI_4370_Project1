@@ -1,8 +1,11 @@
 # Data Mining Project 1
 # By Makenzie Spurling, Josh Sample, and Kathryn Villarreal
 
-# Open training dataset and save it (someone with excel in python
-# experience help)
+import pandas as pd
+
+# This opens the training set and the testing set and stores it in a variable
+trainingDataset = pd.read_excel('Training dataset.xlsx', engine='openpyxl')
+testingDataset = pd.read_excel('Testing dataset.xlsx', engine='openpyxl')
 
 # Class is 90+/90- (1/0)
 # Do a count of how many 1's & 0's in Class save it off <---------------------------|
