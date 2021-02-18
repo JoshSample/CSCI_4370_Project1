@@ -7,6 +7,27 @@ import pandas as pd
 trainingDataset = pd.read_excel('Training dataset.xlsx', engine='openpyxl')
 testingDataset = pd.read_excel('Testing dataset.xlsx', engine='openpyxl')
 
+#row = testingDataset.iloc[1, 1:].array
+#print(row)
+
+
+# Counts up yes/nos (1/0s) in class label
+# and calculates the yes/no probabilites
+yesCount = 0
+noCount = 0
+
+for item in trainingDataset['Grade class 1: 90+  0:90-']:
+    if item == 0:
+        yesCount += 1
+    else:
+        noCount += 1
+
+total = yesCount + noCount;
+yesProb = yesCount / total;
+noProb = noCount / total;
+
+print(total, yesProb, noProb)
+
 # Class is 90+/90- (1/0)
 # Do a count of how many 1's & 0's in Class save it off <---------------------------|
 # Divide that by total and save it off                                              |
