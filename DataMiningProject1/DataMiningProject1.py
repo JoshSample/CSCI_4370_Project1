@@ -30,10 +30,10 @@ def findAttributes(df, totalYes, totalNo):
     Nodf = df.loc[df['Grade class 1: 90+  0:90-'] == 0]
 
     for attrib in attributes:
-        YesYes = len(Yesdf.loc[Yesdf[attrib] == 1])+1/totalYes+2
-        YesNo = len(Yesdf.loc[Yesdf[attrib] == 0])+1/totalYes+2
-        NoYes = len(Nodf.loc[Nodf[attrib] == 1])+1/totalNo+2
-        NoNo = len(Nodf.loc[Nodf[attrib] == 0])+1/totalNo+2
+        YesYes = (len(Yesdf.loc[Yesdf[attrib] == 1])+1)/(totalYes+2)
+        YesNo = (len(Yesdf.loc[Yesdf[attrib] == 0])+1)/(totalYes+2)
+        NoYes = (len(Nodf.loc[Nodf[attrib] == 1])+1)/(totalNo+2)
+        NoNo = (len(Nodf.loc[Nodf[attrib] == 0])+1)/(totalNo+2)
 
         attrib_dict["YesYes" + attrib] = YesYes
         attrib_dict["YesNo" + attrib] = YesNo
@@ -41,18 +41,8 @@ def findAttributes(df, totalYes, totalNo):
         attrib_dict["NoNo" + attrib] = NoNo
 
     return attrib_dict
-    
 
-if __name__ == "__main__":
-    # Load in the training dataset
-    trainingDataset = pd.read_excel('Training dataset.xlsx', engine='openpyxl')
-    # Get the overall totals from the dataset
-    (totalYes, totalNo, total, probYes, probNo) = getTotals(trainingDataset)
-    # Find what attributes contribute and/or detract from 90+
-    attrib_dict = findAttributes(trainingDataset, totalYes, totalNo)
-    # Load in the testing data
-    testingDataset = pd.read_excel('Testing dataset.xlsx', engine='openpyxl')
-
+def predict_grade(df, probYes, probNo, attrib_dict):
     # Loop through each entry
     #   Make X based on the 0s and 1s in the entry
     #   Example: X = (
@@ -67,6 +57,57 @@ if __name__ == "__main__":
     # Multiply all the 90+ probibilities together and then multiply it by the probablity of yes
     # Multiply all the 90- probibilities together and then multiply it by the probablity of no
     # whichever is the highest is the predicted result
+    prediction_dict = dict()
+    attributes = list(df.columns)
+    names = attributes[0]
+    attributes = attributes[2:]
+    yes_prob = 1.0
+    no_prob = 1.0
+    matchYes = 0
+    matchNo = 0
+    # Go through each row and 
+    for i in range(len(df)):
+        row= df.loc[i]
+        for att in attributes:
+            if row[att] == 1:
+                yes_prob *= attrib_dict["YesYes"+att]
+                no_prob *= attrib_dict["NoYes"+att]
+            else:
+                yes_prob *= attrib_dict["YesNo"+att]
+                no_prob *= attrib_dict["NoNo"+att]
+
+        class1 = yes_prob * probYes
+        class2 = no_prob * probNo
+        prediction = int()
+        if class1 > class2:
+            prediction = 1
+        elif class2 > class1:
+            prediction = 0
+        else:
+            prediction = -1
+
+        if row['Grade class 1: 90+  0:90-'] == prediction:
+            prediction_dict[row[names]] = [row['Grade class 1: 90+  0:90-'], prediction, 1]
+            matchYes += 1
+        else:
+            prediction_dict[row[names]] = [row['Grade class 1: 90+  0:90-'], prediction, 0]
+            matchNo += 1
+
+    correctness = matchYes/len(df)
+    print(correctness)    
+    return prediction_dict
+
+if __name__ == "__main__":
+    # Load in the training dataset
+    trainingDataset = pd.read_excel('Training dataset.xlsx', engine='openpyxl')
+    # Get the overall totals from the dataset
+    (totalYes, totalNo, total, probYes, probNo) = getTotals(trainingDataset)
+    # Find what attributes contribute and/or detract from 90+
+    attrib_dict = findAttributes(trainingDataset, totalYes, totalNo)
+    
+    testingDataset = pd.read_excel('Testing dataset.xlsx', engine='openpyxl')
+
+    prediction_dict = predict_grade(testingDataset, probYes, probNo, attrib_dict)
 
     # Compare the predicted results to the actual data and find the accuracy of our method
 
