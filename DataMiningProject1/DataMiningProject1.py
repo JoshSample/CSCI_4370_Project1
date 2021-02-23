@@ -61,7 +61,7 @@ def predict_grade(df, probYes, probNo, attrib_dict):
     attributes = list(df.columns)
     attributes = attributes[2:]
     matchYes = 0
-    # Go through each row and 
+    # Go through each row and calculate probabilities
     for i in range(len(df)):
         row= df.loc[i]
         yes_prob = 1.0
@@ -83,9 +83,11 @@ def predict_grade(df, probYes, probNo, attrib_dict):
             prediction = 0
         else:
             prediction = -1
+        
         new_df = new_df.append({'Real Grade': row['Grade class 1: 90+  0:90-'], 'Predicted Grade': prediction}, ignore_index = True)
         if row['Grade class 1: 90+  0:90-'] == prediction:
             matchYes += 1
+
     correctness = matchYes/len(df) 
     print(correctness)  
     return new_df
@@ -93,16 +95,16 @@ def predict_grade(df, probYes, probNo, attrib_dict):
 if __name__ == "__main__":
     # Load in the training dataset
     trainingDataset = pd.read_excel('Training dataset.xlsx', engine='openpyxl')
+
     # Get the overall totals from the dataset
     (totalYes, totalNo, total, probYes, probNo) = getTotals(trainingDataset)
+
     # Find what attributes contribute and/or detract from 90+
     attrib_dict = findAttributes(trainingDataset, totalYes, totalNo)
     
+    # Load testing dataset
     testingDataset = pd.read_excel('Testing dataset.xlsx', engine='openpyxl')
 
+    # Predict accuracy & write to file
     new_df = predict_grade(testingDataset, probYes, probNo, attrib_dict)
     new_df.to_excel("output.xlsx")
-
-    # Convert to SVM format 
-    # Run training and testing data through SVM.exe
-    # Compare the SVM accuracy to our accuracy
