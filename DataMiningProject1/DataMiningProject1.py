@@ -57,6 +57,7 @@ def predict_grade(df, probYes, probNo, attrib_dict):
     # Multiply all the 90+ probibilities together and then multiply it by the probablity of yes
     # Multiply all the 90- probibilities together and then multiply it by the probablity of no
     # whichever is the highest is the predicted result
+    new_df = pd.DataFrame(columns = ['Real Grade', 'Predicted Grade'])
     attributes = list(df.columns)
     attributes = attributes[2:]
     matchYes = 0
@@ -82,11 +83,12 @@ def predict_grade(df, probYes, probNo, attrib_dict):
             prediction = 0
         else:
             prediction = -1
-
+        new_df = new_df.append({'Real Grade': row['Grade class 1: 90+  0:90-'], 'Predicted Grade': prediction}, ignore_index = True)
         if row['Grade class 1: 90+  0:90-'] == prediction:
             matchYes += 1
-    correctness = matchYes/len(df)   
-    return correctness
+    correctness = matchYes/len(df) 
+    print(correctness)  
+    return new_df
 
 if __name__ == "__main__":
     # Load in the training dataset
@@ -98,9 +100,8 @@ if __name__ == "__main__":
     
     testingDataset = pd.read_excel('Testing dataset.xlsx', engine='openpyxl')
 
-    prediction_dict = predict_grade(testingDataset, probYes, probNo, attrib_dict)
-
-    # Compare the predicted results to the actual data and find the accuracy of our method
+    new_df = predict_grade(testingDataset, probYes, probNo, attrib_dict)
+    new_df.to_excel("output.xlsx")
 
     # Convert to SVM format 
     # Run training and testing data through SVM.exe
