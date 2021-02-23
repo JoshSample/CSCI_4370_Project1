@@ -30,7 +30,6 @@ def findAttributes(df, totalYes, totalNo):
     Nodf = df.loc[df['Grade class 1: 90+  0:90-'] == 0]
 
     for attrib in attributes:
-        #if len(df.loc[df[attrib]==0]) != len(df):
         YesYes = (len(Yesdf.loc[Yesdf[attrib] == 1])+1)/(totalYes+2)
         YesNo = (len(Yesdf.loc[Yesdf[attrib] == 0])+1)/(totalYes+2)
         NoYes = (len(Nodf.loc[Nodf[attrib] == 1])+1)/(totalNo+2)
@@ -58,20 +57,15 @@ def predict_grade(df, probYes, probNo, attrib_dict):
     # Multiply all the 90+ probibilities together and then multiply it by the probablity of yes
     # Multiply all the 90- probibilities together and then multiply it by the probablity of no
     # whichever is the highest is the predicted result
-    prediction_dict = dict()
     attributes = list(df.columns)
-    names = attributes[0]
     attributes = attributes[2:]
     matchYes = 0
-    matchNo = 0
     # Go through each row and 
     for i in range(len(df)):
         row= df.loc[i]
         yes_prob = 1.0
         no_prob = 1.0
         for att in attributes:
-            # check_key = "YesYes"+att
-            # if len(df.loc[df[att]==0]) != len(df) and check_key in attrib_dict:
             if row[att] == 1:
                 yes_prob = yes_prob * attrib_dict["YesYes"+att]
                 no_prob = no_prob * attrib_dict["NoYes"+att]
@@ -90,15 +84,9 @@ def predict_grade(df, probYes, probNo, attrib_dict):
             prediction = -1
 
         if row['Grade class 1: 90+  0:90-'] == prediction:
-            prediction_dict[row[names]] = [row['Grade class 1: 90+  0:90-'], prediction, 1]
             matchYes += 1
-        else:
-            prediction_dict[row[names]] = [row['Grade class 1: 90+  0:90-'], prediction, 0]
-            matchNo += 1
-
-    correctness = matchYes/len(df)
-    print(correctness)    
-    return prediction_dict
+    correctness = matchYes/len(df)   
+    return correctness
 
 if __name__ == "__main__":
     # Load in the training dataset
