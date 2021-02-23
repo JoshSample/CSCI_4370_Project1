@@ -30,10 +30,11 @@ def findAttributes(df, totalYes, totalNo):
     Nodf = df.loc[df['Grade class 1: 90+  0:90-'] == 0]
 
     for attrib in attributes:
-        YesYes = round((len(Yesdf.loc[Yesdf[attrib] == 1])+1)/(totalYes+2), 4)
-        YesNo = round((len(Yesdf.loc[Yesdf[attrib] == 0])+1)/(totalYes+2), 4)
-        NoYes = round((len(Nodf.loc[Nodf[attrib] == 1])+1)/(totalNo+2), 4)
-        NoNo = round((len(Nodf.loc[Nodf[attrib] == 0])+1)/(totalNo+2), 4)
+        #if len(df.loc[df[attrib]==0]) != len(df):
+        YesYes = (len(Yesdf.loc[Yesdf[attrib] == 1])+1)/(totalYes+2)
+        YesNo = (len(Yesdf.loc[Yesdf[attrib] == 0])+1)/(totalYes+2)
+        NoYes = (len(Nodf.loc[Nodf[attrib] == 1])+1)/(totalNo+2)
+        NoNo = (len(Nodf.loc[Nodf[attrib] == 0])+1)/(totalNo+2)
 
         attrib_dict["YesYes" + attrib] = YesYes
         attrib_dict["YesNo" + attrib] = YesNo
@@ -61,20 +62,22 @@ def predict_grade(df, probYes, probNo, attrib_dict):
     attributes = list(df.columns)
     names = attributes[0]
     attributes = attributes[2:]
-    yes_prob = 1.0
-    no_prob = 1.0
     matchYes = 0
     matchNo = 0
     # Go through each row and 
     for i in range(len(df)):
         row= df.loc[i]
+        yes_prob = 1.0
+        no_prob = 1.0
         for att in attributes:
+            # check_key = "YesYes"+att
+            # if len(df.loc[df[att]==0]) != len(df) and check_key in attrib_dict:
             if row[att] == 1:
-                yes_prob *= attrib_dict["YesYes"+att]
-                no_prob *= attrib_dict["YesNo"+att]
+                yes_prob = yes_prob * attrib_dict["YesYes"+att]
+                no_prob = no_prob * attrib_dict["NoYes"+att]
             else:
-                yes_prob *= attrib_dict["NoYes"+att]
-                no_prob *= attrib_dict["NoNo"+att]
+                yes_prob = yes_prob * attrib_dict["YesNo"+att]
+                no_prob = no_prob * attrib_dict["NoNo"+att]
 
         class1 = yes_prob * probYes
         class2 = no_prob * probNo
