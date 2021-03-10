@@ -92,26 +92,47 @@ def predict_grade(df, probYes, probNo, attrib_dict):
     print(correctness)  
     return new_df
 
-def shuffle(ds):
-    # Shuffle the dataset
-    # then split data into 5 equal parts
-    df = ds.sample(frac = 1)
-    splitsNum = int(len(df) / 5)
-    set1 = df.iloc[0:splitsNum]
-    set2 = df.iloc[splitsNum+1:splitsNum*2]
-    set3 = df.iloc[splitsNum*2+1:splitsNum*3]
-    set4 = df.iloc[splitsNum*3+1:splitsNum*4]
-    set5 = df.iloc[splitsNum*4+1:splitsNum*5]
-    return set1, set2, set3, set4, set5
+# What needs to happen here is that you take four of the five sets
+# and combine them into a training set use the left over as testing set
+# Here is the ten dataset sets (5 train, 5 test) that need to be created
+# TESTING     TRAINING (COMBINE THESE)
+#   1               2-3-4-5
+#   2               1-3-4-5
+#   3               1-2-4-5
+#   4               1-2-3-5
+#   5               1-2-3-4
 
+# After this is done SAVE THEM off to excel files BECAUSE we need to run them with 
+# SVM, after this just like we did normally for the first project
 
+# AFTER THIS IS DONE AND WE have a predicted and a true for these excel file for each 
+# of these (we'll have five in total)
+
+# Compare the true & predicted to each other to find the truePositive, trueNegative, etc.
+# EXAMPLE ON HOW IT WORKS:
+# TRUE      PREDICTED
+# 1             1           True Positive
+# 1             0           False Negative
+# 0             1           False Positive
+# 0             0           True Negative
+
+# Once we have these now we calculate the values:
+# sensitivity = Ture Positive/Positive
+# specificity = True Negative/Negative
+# precision = True Positive/(True Positive + False Positive)
+# accuracy = (True Positives + True Negatives)/(True Positives + False Positives + False Negatives + True Negatives)
+# for accuracy the value in denominator is just how many rows are in the excel file lol
+
+# ONTO SVM:
+# SVM gives precision & sensisitvy & accuracy, we'll have to calculate
+# specificity
+# Which means converting the output file from an svm run into 1 and 0's
+# and then just doing the calcualtions
+# Sorry Kat that exam problem has come back from the dead
 
 if __name__ == "__main__":
     # Load in the whole dataset
     trainingDataset = pd.read_excel('Full Wine Data.xlsx', engine='openpyxl')
-
-    # Shuffle rows and split into 5 sets
-    (set1, set2, set3, set4, set5) = shuffle(trainingDataset)
 
     # Get the overall totals from the dataset
     (totalYes, totalNo, total, probYes, probNo) = getTotals(trainingDataset)
