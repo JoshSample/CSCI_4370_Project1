@@ -1,4 +1,4 @@
-with open(r'C:\Users\joshs\git\CSCI_4370_Project1\Project1FollowUp\SVMParts\set1.txt', 'r') as reader, open(r'C:\Users\joshs\git\CSCI_4370_Project1\Project1FollowUp\SVMParts\set1_svm.txt.txt', 'w') as writer:
+with open('Project1FollowUp/SVMParts/set5.txt', 'r', encoding='utf-8-sig') as reader, open('Project1FollowUp/SVMParts/set5_svm.txt', 'w') as writer:
     for line in reader:
         words = line.split(',')
         if (words[0] == '0'):
