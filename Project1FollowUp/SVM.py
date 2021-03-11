@@ -2,19 +2,21 @@ import pandas as pd
 import os
 
 def convert(real, predict):
-   new_df = pd.DataFrame(columns = ['Real Grade', 'Predicted Grade'])
-   prediction = list()
-   i = 0
-   # Grab the real values from the original data set
-   realvalue = real['Grade class 1: 90+  0:90-'].to_list()
-   for line in predict:
-       if (float(line.rstrip()) > 0):
-           prediction.append(1)
-       elif (float(line.rstrip()) < 0):
-           prediction.append(0)
-       i += 1
+    new_df = pd.DataFrame(columns = ['Real Grade', 'Predicted Grade'])
+    prediction = list()
+    i = 0
+    # Grab the real values from the original data set
+    realvalue = real['Grade class 1: 90+  0:90-'].to_list()
+    for line in predict:
+        if (float(line.rstrip()) > 0):
+            prediction.append(1)
+        elif (float(line.rstrip()) < 0):
+            prediction.append(0)
+        i += 1
 
-   return new_df.append({'Real Grade':realvalue, 'Predicted Grade':prediction}, ignore_index = True)
+    df = pd.DataFrame({'Real Grade':realvalue, 'Predicted Grade': prediction})
+
+    return df
 
 def sspa(df):
     tp = 0
@@ -41,13 +43,9 @@ def sspa(df):
     return tp,tn,fp,fn,sensitivity, specificity, precision, accuracy
 
 if __name__ == "__main__":
-    #os.chdir(r'C:\Users\mak_1\Documents\College\Spring 2021\Data Mining\Class\2-11 Project1\DataMiningProject1\Project1FollowUp')
-    dir = os.getcwd()
-    dir1 = dir + "\Project1FollowUp\predict.txt"
-    
     # Grab the output file and convert
-    predict = open(dir1, 'r')
-    realvalue = pd.read_excel(r'C:\Users\mak_1\Documents\College\Spring 2021\Data Mining\Class\2-11 Project1\DataMiningProject1\Project1FollowUp\real.xlsx', engine='openpyxl')
+    predict = open('./SVMParts/predictions/prediction_set1.txt', 'r')
+    realvalue = pd.read_excel('set1.xlsx', engine='openpyxl')
 
     converted = convert(realvalue, predict)
     print(sspa(converted))
