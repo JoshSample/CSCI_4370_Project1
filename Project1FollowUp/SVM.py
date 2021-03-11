@@ -1,23 +1,20 @@
 import pandas as pd
+import os
 
-# if you want to, just the program to convert the prediction to the 0 and 1 format and then compare the prediction to the actual to get accuracy measures.
-
-def convert(dfr, dfp):
+def convert(real, predict):
    new_df = pd.DataFrame(columns = ['Real Grade', 'Predicted Grade'])
+   prediction = list()
+   i = 0
    # Grab the real values from the original data set
-   realvalue = dfr.loc[df['Grade class 1: 90+  0:90-']]
-   # Concatenate it with the unconverted 
-   conv = concat([realvalue, dfp], join = 'outer', axis = 1)
-   attributes = list(conv.columns)
-   attributes = attributes[2:]
-   for i in range(len(conv)):
-       row= conv.loc[i]
-       for att in attributes:
-           if (row[att] > 0):
-               prediction = 1
-           elif (BLANK < 0):
-               prediction = 0
-           new_df = new_df.append({'Real Grade': row['Grade class 1: 90+  0:90-'], 'Predicted Grade': prediction}, ignore_index = True)
+   realvalue = real['Grade class 1: 90+  0:90-'].to_list()
+   for line in predict:
+       if (float(line.rstrip()) > 0):
+           prediction.append(1)
+       elif (float(line.rstrip()) < 0):
+           prediction.append(0)
+       i += 1
+
+   return new_df.append({'Real Grade':realvalue, 'Predicted Grade':prediction}, ignore_index = True)
 
 def sspa(df):
     tp = 0
@@ -44,9 +41,13 @@ def sspa(df):
     return tp,tn,fp,fn,sensitivity, specificity, precision, accuracy
 
 if __name__ == "__main__":
+    #os.chdir(r'C:\Users\mak_1\Documents\College\Spring 2021\Data Mining\Class\2-11 Project1\DataMiningProject1\Project1FollowUp')
+    dir = os.getcwd()
+    dir1 = dir + "\Project1FollowUp\predict.txt"
+    
     # Grab the output file and convert
-    # need to read the input file
-    realvalue = pd.read_exel('real.xlsx', engine='openpyxl')
+    predict = open(dir1, 'r')
+    realvalue = pd.read_excel(r'C:\Users\mak_1\Documents\College\Spring 2021\Data Mining\Class\2-11 Project1\DataMiningProject1\Project1FollowUp\real.xlsx', engine='openpyxl')
 
-    converted = convert(realvalue, output)
-    (tp,tn,fp,fn,sensitivity, specificity, precision, accuracy) = sspa(converted)
+    converted = convert(realvalue, predict)
+    print(sspa(converted))
