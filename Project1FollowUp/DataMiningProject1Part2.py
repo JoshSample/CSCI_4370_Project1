@@ -92,6 +92,32 @@ def predict_grade(df, probYes, probNo, attrib_dict):
     print(correctness)  
     return new_df
 
+def sspa(df):
+    tp = 0
+    tn = 0
+    fp = 0
+    fn = 0
+    for i in range(len(df)):
+        row= df.loc[i]
+        if row['Real Grade'] == 1:
+            if row['Predicted Grade'] == 1:
+                tp = tp + 1
+            else:
+                fn = fn + 1
+        else:
+            if row['Predicted Grade'] == 0:
+                tn = tn + 1
+            else:
+                fp = fp + 1
+    sensitivity = tp/(tp+fn)
+    specificity = tn/(tn+fp)
+    precision = tp/(tp+fp)
+    accuracy = (tp + tn)/(tp + fp + fn + tn)
+
+    return tp,tn,fp,fn,sensitivity, specificity, precision, accuracy
+
+
+
 # What needs to happen here is that you take four of the five sets
 # and combine them into a training set use the left over as testing set
 # Here is the ten dataset sets (5 train, 5 test) that need to be created
@@ -132,17 +158,72 @@ def predict_grade(df, probYes, probNo, attrib_dict):
 
 if __name__ == "__main__":
     # Load in the whole dataset
-    trainingDataset = pd.read_excel('Full Wine Data.xlsx', engine='openpyxl')
+    # trainingDataset = pd.read_excel('Full Wine Data.xlsx', engine='openpyxl')
 
-    # Get the overall totals from the dataset
-    (totalYes, totalNo, total, probYes, probNo) = getTotals(trainingDataset)
+    # # Get the overall totals from the dataset
+    # (totalYes, totalNo, total, probYes, probNo) = getTotals(trainingDataset)
 
-    # Find what attributes contribute and/or detract from 90+
-    attrib_dict = findAttributes(trainingDataset, totalYes, totalNo)
+    # # Find what attributes contribute and/or detract from 90+
+    # attrib_dict = findAttributes(trainingDataset, totalYes, totalNo)
     
-    # Load testing dataset
-    testingDataset = pd.read_excel('Full Wine Data.xlsx', engine='openpyxl')
+    # # Load testing dataset
+    # testingDataset = pd.read_excel('Full Wine Data.xlsx', engine='openpyxl')
 
-    # Predict accuracy & write to file
-    new_df = predict_grade(testingDataset, probYes, probNo, attrib_dict)
-    new_df.to_excel("output.xlsx")
+    # # Predict accuracy & write to file
+    # new_df = predict_grade(testingDataset, probYes, probNo, attrib_dict)
+    # new_df.to_excel("output.xlsx")
+
+    set1 = pd.read_excel('set1.xlsx', engine='openpyxl')
+    set2 = pd.read_excel('set2.xlsx', engine='openpyxl')
+    set3 = pd.read_excel('set3.xlsx', engine='openpyxl')
+    set4 = pd.read_excel('set4.xlsx', engine='openpyxl')
+    set5 = pd.read_excel('set5.xlsx', engine='openpyxl')
+
+    test_df = set1
+    training = pd.concat([set2, set3, set4, set5])
+    (totalYes, totalNo, total, probYes, probNo) = getTotals(training)
+    attrib_dict = findAttributes(training, totalYes, totalNo)
+    set1_predict = predict_grade(test_df, probYes, probNo, attrib_dict)
+    (tp,tn,fp,fn,sensitivity, specificity, precision, accuracy) = sspa(set1_predict)
+    set1_predict.to_excel("set1_predict.xlsx")
+
+    new_df = pd.DataFrame(columns = ['Fold','TP', 'FP', 'FN', 'TN', 'Sensitivity', 'Specificity', 'Precision', 'Accuracy'])
+    new_df = new_df.append({'Fold': "Fold 1",'TP': tp, 'FP':fp, 'FN':fn, 'TN':tn, 'Sensitivity':sensitivity, 'Specificity':specificity, 'Precision':precision, 'Accuracy':accuracy}, ignore_index = True)
+
+    test_df = set2
+    training = pd.concat([set1, set3, set4, set5])
+    (totalYes, totalNo, total, probYes, probNo) = getTotals(training)
+    attrib_dict = findAttributes(training, totalYes, totalNo)
+    set2_predict = predict_grade(test_df, probYes, probNo, attrib_dict)
+    (tp,tn,fp,fn,sensitivity, specificity, precision, accuracy) = sspa(set2_predict)
+    set2_predict.to_excel("set2_predict.xlsx")
+    new_df = new_df.append({'Fold': "Fold 2",'TP': tp, 'FP':fp, 'FN':fn, 'TN':tn, 'Sensitivity':sensitivity, 'Specificity':specificity, 'Precision':precision, 'Accuracy':accuracy}, ignore_index = True)
+
+    test_df = set3
+    training = pd.concat([set2, set1, set4, set5])
+    (totalYes, totalNo, total, probYes, probNo) = getTotals(training)
+    attrib_dict = findAttributes(training, totalYes, totalNo)
+    set3_predict = predict_grade(test_df, probYes, probNo, attrib_dict)
+    (tp,tn,fp,fn,sensitivity, specificity, precision, accuracy) = sspa(set3_predict)
+    set3_predict.to_excel("set3_predict.xlsx")
+    new_df = new_df.append({'Fold': "Fold 3",'TP': tp, 'FP':fp, 'FN':fn, 'TN':tn, 'Sensitivity':sensitivity, 'Specificity':specificity, 'Precision':precision, 'Accuracy':accuracy}, ignore_index = True)
+
+    test_df = set4
+    training = pd.concat([set2, set3, set1, set5])
+    (totalYes, totalNo, total, probYes, probNo) = getTotals(training)
+    attrib_dict = findAttributes(training, totalYes, totalNo)
+    set4_predict = predict_grade(test_df, probYes, probNo, attrib_dict)
+    (tp,tn,fp,fn,sensitivity, specificity, precision, accuracy) = sspa(set4_predict)
+    set4_predict.to_excel("set4_predict.xlsx")
+    new_df = new_df.append({'Fold': "Fold 4",'TP': tp, 'FP':fp, 'FN':fn, 'TN':tn, 'Sensitivity':sensitivity, 'Specificity':specificity, 'Precision':precision, 'Accuracy':accuracy}, ignore_index = True)
+
+    test_df = set5
+    training = pd.concat([set2, set3, set4, set1])
+    (totalYes, totalNo, total, probYes, probNo) = getTotals(training)
+    attrib_dict = findAttributes(training, totalYes, totalNo)
+    set5_predict = predict_grade(test_df, probYes, probNo, attrib_dict)
+    (tp,tn,fp,fn,sensitivity, specificity, precision, accuracy) = sspa(set5_predict)
+    set5_predict.to_excel("set5_predict.xlsx")
+    new_df = new_df.append({'Fold': "Fold 5",'TP': tp, 'FP':fp, 'FN':fn, 'TN':tn, 'Sensitivity':sensitivity, 'Specificity':specificity, 'Precision':precision, 'Accuracy':accuracy}, ignore_index = True)
+
+    new_df.to_excel("please.xlsx")
