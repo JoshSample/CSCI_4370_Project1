@@ -173,11 +173,11 @@ if __name__ == "__main__":
     # # Predict accuracy & write to file
     # new_df = predict_grade(testingDataset, probYes, probNo, attrib_dict)
     # new_df.to_excel("output.xlsx")
-    set1 = pd.read_excel('set11.xlsx', engine='openpyxl')
-    set2 = pd.read_excel('set12.xlsx', engine='openpyxl')
-    set3 = pd.read_excel('set13.xlsx', engine='openpyxl')
-    set4 = pd.read_excel('set14.xlsx', engine='openpyxl')
-    set5 = pd.read_excel('set15.xlsx', engine='openpyxl')
+    set1 = pd.read_excel('set1.xlsx', engine='openpyxl')
+    set2 = pd.read_excel('set2.xlsx', engine='openpyxl')
+    set3 = pd.read_excel('set3.xlsx', engine='openpyxl')
+    set4 = pd.read_excel('set4.xlsx', engine='openpyxl')
+    set5 = pd.read_excel('set5.xlsx', engine='openpyxl')
 
     test_df = set1
     training = pd.concat([set2, set3, set4, set5])
@@ -189,7 +189,7 @@ if __name__ == "__main__":
     (tp,tn,fp,fn,sensitivity, specificity, precision, accuracy) = sspa(set1_predict)
     end = time.time()-start
     print (end)
-    set1_predict.to_excel("set11_predict.xlsx")
+    set1_predict.to_excel("set1_predict.xlsx")
 
     new_df = pd.DataFrame(columns = ['Fold','TP', 'FP', 'FN', 'TN', 'Sensitivity', 'Specificity', 'Precision', 'Accuracy'])
     new_df = new_df.append({'Fold': "Fold 1",'TP': tp, 'FP':fp, 'FN':fn, 'TN':tn, 'Sensitivity':sensitivity, 'Specificity':specificity, 'Precision':precision, 'Accuracy':accuracy}, ignore_index = True)
@@ -203,7 +203,7 @@ if __name__ == "__main__":
     (tp,tn,fp,fn,sensitivity, specificity, precision, accuracy) = sspa(set2_predict)
     end = time.time()-start
     print (end)
-    set2_predict.to_excel("set12_predict.xlsx")
+    set2_predict.to_excel("set2_predict.xlsx")
     new_df = new_df.append({'Fold': "Fold 2",'TP': tp, 'FP':fp, 'FN':fn, 'TN':tn, 'Sensitivity':sensitivity, 'Specificity':specificity, 'Precision':precision, 'Accuracy':accuracy}, ignore_index = True)
 
     test_df = set3
@@ -215,7 +215,7 @@ if __name__ == "__main__":
     (tp,tn,fp,fn,sensitivity, specificity, precision, accuracy) = sspa(set3_predict)
     end = time.time()-start
     print (end)
-    set3_predict.to_excel("set13_predict.xlsx")
+    set3_predict.to_excel("set3_predict.xlsx")
     new_df = new_df.append({'Fold': "Fold 3",'TP': tp, 'FP':fp, 'FN':fn, 'TN':tn, 'Sensitivity':sensitivity, 'Specificity':specificity, 'Precision':precision, 'Accuracy':accuracy}, ignore_index = True)
 
     test_df = set4
@@ -227,7 +227,7 @@ if __name__ == "__main__":
     (tp,tn,fp,fn,sensitivity, specificity, precision, accuracy) = sspa(set4_predict)
     end = time.time()-start
     print (end)
-    set4_predict.to_excel("set14_predict.xlsx")
+    set4_predict.to_excel("set4_predict.xlsx")
     new_df = new_df.append({'Fold': "Fold 4",'TP': tp, 'FP':fp, 'FN':fn, 'TN':tn, 'Sensitivity':sensitivity, 'Specificity':specificity, 'Precision':precision, 'Accuracy':accuracy}, ignore_index = True)
 
     test_df = set5
@@ -239,7 +239,7 @@ if __name__ == "__main__":
     (tp,tn,fp,fn,sensitivity, specificity, precision, accuracy) = sspa(set5_predict)
     end = time.time()-start
     print (end)
-    set5_predict.to_excel("set15_predict.xlsx")
+    set5_predict.to_excel("set5_predict.xlsx")
     new_df = new_df.append({'Fold': "Fold 5",'TP': tp, 'FP':fp, 'FN':fn, 'TN':tn, 'Sensitivity':sensitivity, 'Specificity':specificity, 'Precision':precision, 'Accuracy':accuracy}, ignore_index = True)
 
     new_df.to_excel("please.xlsx")
