@@ -2,6 +2,7 @@
 # By Makenzie Spurling, Josh Sample, and Kathryn Villarreal
 
 import pandas as pd
+import time
 
 def getTotals(df):
     # Create seperate dataframes of 90+ and 90-
@@ -25,7 +26,7 @@ def findAttributes(df, totalYes, totalNo):
     #   of the attributes
     attrib_dict = dict()
     attributes = list(df.columns)
-    attributes = attributes[2:]
+    attributes = attributes[3:]
     Yesdf = df.loc[df['Grade class 1: 90+  0:90-'] == 1]
     Nodf = df.loc[df['Grade class 1: 90+  0:90-'] == 0]
 
@@ -59,7 +60,7 @@ def predict_grade(df, probYes, probNo, attrib_dict):
     # whichever is the highest is the predicted result
     new_df = pd.DataFrame(columns = ['Real Grade', 'Predicted Grade'])
     attributes = list(df.columns)
-    attributes = attributes[2:]
+    attributes = attributes[3:]
     matchYes = 0
     # Go through each row and calculate probabilities
     for i in range(len(df)):
@@ -89,7 +90,7 @@ def predict_grade(df, probYes, probNo, attrib_dict):
             matchYes += 1
 
     correctness = matchYes/len(df) 
-    print(correctness)  
+    #print(correctness)  
     return new_df
 
 def sspa(df):
@@ -172,58 +173,73 @@ if __name__ == "__main__":
     # # Predict accuracy & write to file
     # new_df = predict_grade(testingDataset, probYes, probNo, attrib_dict)
     # new_df.to_excel("output.xlsx")
-
-    set1 = pd.read_excel('set1.xlsx', engine='openpyxl')
-    set2 = pd.read_excel('set2.xlsx', engine='openpyxl')
-    set3 = pd.read_excel('set3.xlsx', engine='openpyxl')
-    set4 = pd.read_excel('set4.xlsx', engine='openpyxl')
-    set5 = pd.read_excel('set5.xlsx', engine='openpyxl')
+    set1 = pd.read_excel('set11.xlsx', engine='openpyxl')
+    set2 = pd.read_excel('set12.xlsx', engine='openpyxl')
+    set3 = pd.read_excel('set13.xlsx', engine='openpyxl')
+    set4 = pd.read_excel('set14.xlsx', engine='openpyxl')
+    set5 = pd.read_excel('set15.xlsx', engine='openpyxl')
 
     test_df = set1
     training = pd.concat([set2, set3, set4, set5])
+    print (training)
+    start = time.time()
     (totalYes, totalNo, total, probYes, probNo) = getTotals(training)
     attrib_dict = findAttributes(training, totalYes, totalNo)
     set1_predict = predict_grade(test_df, probYes, probNo, attrib_dict)
     (tp,tn,fp,fn,sensitivity, specificity, precision, accuracy) = sspa(set1_predict)
-    set1_predict.to_excel("set1_predict.xlsx")
+    end = time.time()-start
+    print (end)
+    set1_predict.to_excel("set11_predict.xlsx")
 
     new_df = pd.DataFrame(columns = ['Fold','TP', 'FP', 'FN', 'TN', 'Sensitivity', 'Specificity', 'Precision', 'Accuracy'])
     new_df = new_df.append({'Fold': "Fold 1",'TP': tp, 'FP':fp, 'FN':fn, 'TN':tn, 'Sensitivity':sensitivity, 'Specificity':specificity, 'Precision':precision, 'Accuracy':accuracy}, ignore_index = True)
 
     test_df = set2
     training = pd.concat([set1, set3, set4, set5])
+    start = time.time()
     (totalYes, totalNo, total, probYes, probNo) = getTotals(training)
     attrib_dict = findAttributes(training, totalYes, totalNo)
     set2_predict = predict_grade(test_df, probYes, probNo, attrib_dict)
     (tp,tn,fp,fn,sensitivity, specificity, precision, accuracy) = sspa(set2_predict)
-    set2_predict.to_excel("set2_predict.xlsx")
+    end = time.time()-start
+    print (end)
+    set2_predict.to_excel("set12_predict.xlsx")
     new_df = new_df.append({'Fold': "Fold 2",'TP': tp, 'FP':fp, 'FN':fn, 'TN':tn, 'Sensitivity':sensitivity, 'Specificity':specificity, 'Precision':precision, 'Accuracy':accuracy}, ignore_index = True)
 
     test_df = set3
     training = pd.concat([set2, set1, set4, set5])
+    start = time.time()
     (totalYes, totalNo, total, probYes, probNo) = getTotals(training)
     attrib_dict = findAttributes(training, totalYes, totalNo)
     set3_predict = predict_grade(test_df, probYes, probNo, attrib_dict)
     (tp,tn,fp,fn,sensitivity, specificity, precision, accuracy) = sspa(set3_predict)
-    set3_predict.to_excel("set3_predict.xlsx")
+    end = time.time()-start
+    print (end)
+    set3_predict.to_excel("set13_predict.xlsx")
     new_df = new_df.append({'Fold': "Fold 3",'TP': tp, 'FP':fp, 'FN':fn, 'TN':tn, 'Sensitivity':sensitivity, 'Specificity':specificity, 'Precision':precision, 'Accuracy':accuracy}, ignore_index = True)
 
     test_df = set4
     training = pd.concat([set2, set3, set1, set5])
+    start = time.time()
     (totalYes, totalNo, total, probYes, probNo) = getTotals(training)
     attrib_dict = findAttributes(training, totalYes, totalNo)
     set4_predict = predict_grade(test_df, probYes, probNo, attrib_dict)
     (tp,tn,fp,fn,sensitivity, specificity, precision, accuracy) = sspa(set4_predict)
-    set4_predict.to_excel("set4_predict.xlsx")
+    end = time.time()-start
+    print (end)
+    set4_predict.to_excel("set14_predict.xlsx")
     new_df = new_df.append({'Fold': "Fold 4",'TP': tp, 'FP':fp, 'FN':fn, 'TN':tn, 'Sensitivity':sensitivity, 'Specificity':specificity, 'Precision':precision, 'Accuracy':accuracy}, ignore_index = True)
 
     test_df = set5
     training = pd.concat([set2, set3, set4, set1])
+    start = time.time()
     (totalYes, totalNo, total, probYes, probNo) = getTotals(training)
     attrib_dict = findAttributes(training, totalYes, totalNo)
     set5_predict = predict_grade(test_df, probYes, probNo, attrib_dict)
     (tp,tn,fp,fn,sensitivity, specificity, precision, accuracy) = sspa(set5_predict)
-    set5_predict.to_excel("set5_predict.xlsx")
+    end = time.time()-start
+    print (end)
+    set5_predict.to_excel("set15_predict.xlsx")
     new_df = new_df.append({'Fold': "Fold 5",'TP': tp, 'FP':fp, 'FN':fn, 'TN':tn, 'Sensitivity':sensitivity, 'Specificity':specificity, 'Precision':precision, 'Accuracy':accuracy}, ignore_index = True)
 
     new_df.to_excel("please.xlsx")
