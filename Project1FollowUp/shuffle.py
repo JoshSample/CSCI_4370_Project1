@@ -6,10 +6,10 @@ def shuffle(ds):
     df = ds.sample(frac = 1)
     splitsNum = int(len(df) / 5)
     set1 = df.iloc[0:splitsNum]
-    set2 = df.iloc[splitsNum+1:splitsNum*2]
-    set3 = df.iloc[splitsNum*2+1:splitsNum*3]
-    set4 = df.iloc[splitsNum*3+1:splitsNum*4]
-    set5 = df.iloc[splitsNum*4+1:splitsNum*5]
+    set2 = df.iloc[splitsNum:splitsNum*2]
+    set3 = df.iloc[splitsNum*2:splitsNum*3]
+    set4 = df.iloc[splitsNum*3:splitsNum*4]
+    set5 = df.iloc[splitsNum*4:splitsNum*5]
     return set1, set2, set3, set4, set5
 
 if __name__ == "__main__":
